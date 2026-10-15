@@ -3,9 +3,9 @@
 
 # 📖 TADA
 
-### AI 기반 감성 다이어리 · 자연어 일기 검색
+### AIを活用した感情日記・自然言語検索サービス
 
-**기억나는 문장만 입력해도, 의미가 비슷한 과거 일기를 찾아주는 검색 기능**
+**覚えている文章を入力するだけで、意味が近い過去の日記を見つけられる検索機能**
 
 <br>
 
@@ -18,130 +18,130 @@
 
 <br><br>
 
-[**전체 프로젝트**](https://github.com/OhSSangHoon/tada-was) ·
-[**내 검색 기능 코드**](https://github.com/halloween96/tada-was/tree/fix/search-cosine-distance/src/main/java/com/tada/tada/search) ·
-[**검색 테스트 코드**](https://github.com/halloween96/tada-was/tree/fix/search-cosine-distance/src/test/java/com/tada/tada/search)
+[**プロジェクト全体**](https://github.com/OhSSangHoon/tada-was) ·
+[**担当した検索機能のコード**](https://github.com/halloween96/tada-was_JR/tree/fix/search-cosine-distance/src/main/java/com/tada/tada/search) ·
+[**検索機能のテストコード**](https://github.com/halloween96/tada-was_JR/tree/fix/search-cosine-distance/src/test/java/com/tada/tada/search)
 
 </div>
 
 ---
 
-## 📌 프로젝트 소개
+## 📌 プロジェクト概要
 
-**TADA**는 사용자의 일기를 기록하고 AI를 활용해 회상할 수 있도록 돕는 다이어리 서비스입니다.
+**TADA**は、ユーザーが日記を記録し、AIを活用して過去の出来事を振り返ることができる日記サービスです。
 
-저는 팀 프로젝트에서 **백엔드 `search` 영역**을 담당했습니다.
+私はチームプロジェクトで、**バックエンドの`search`機能**を担当しました。
 
-과거 일기의 문구를 정확하게 기억하지 못하더라도, 자연어 검색어를 벡터로 변환하여 **내용의 의미가 가까운 일기를 찾는 기능**을 구현했습니다.
+過去の日記に書いた文章を正確に覚えていなくても、自然言語の検索キーワードをベクトルに変換し、**内容の意味が近い日記を検索できる機能**を実装しました。
 
-> **담당 범위**
+> **担当範囲**
 >
-> 자연어 검색 REST API · Voyage AI 임베딩 연동 · pgvector 유사도 검색 · 정렬/페이지네이션 · 임베딩 비동기 갱신 · 단위 테스트
+> 自然言語検索REST API・Voyage AIのEmbedding API連携・pgvectorによる類似度検索・ソート／ページネーション・Embeddingの非同期更新・単体テスト
 
 ---
 
-## 🛠 기술 스택
+## 🛠 技術スタック
 
-| 구분 | 사용 기술 |
+| 区分 | 使用技術 |
 | :--- | :--- |
 | Language | Java 17 |
 | Backend | Spring Boot, Spring Data JPA, Spring Security, Spring RestClient |
 | Database | PostgreSQL, pgvector |
-| AI | Voyage AI (`voyage-4`, 1024차원 임베딩) |
+| AI | Voyage AI（`voyage-4`、1024次元Embedding） |
 | Test | JUnit 5, Mockito |
 | Collaboration | Git, GitHub |
 
 ---
 
-## ✨ 주요 기능
+## ✨ 主な機能
 
-| 기능 | 내용 |
+| 機能 | 内容 |
 | :--- | :--- |
-| 🔎 **자연어 의미 검색** | 검색어를 임베딩하여 의미상 유사한 과거 일기 조회 |
-| 🔐 **사용자별 검색** | 로그인한 사용자가 작성한 일기만 조회 |
-| ↕️ **정렬 및 페이징** | 관련도순, 최신순, 오래된순 및 페이지 단위 조회 |
-| 🔄 **임베딩 자동 갱신** | 일기 생성·수정 후 이벤트 기반으로 검색 벡터 비동기 갱신 |
-| 🛡️ **오류 대응** | 검색어 유효성 검증 및 외부 API 429 응답 재시도 |
-| 🧪 **단위 테스트** | 검색 결과 변환, 정렬 분기, 오류 흐름 검증 |
+| 🔎 **自然言語による意味検索** | 検索キーワードをベクトル化し、意味的に類似した過去の日記を検索 |
+| 🔐 **ユーザー別検索** | ログインユーザーが作成した日記のみを検索 |
+| ↕️ **ソート・ページネーション** | 関連度順、新しい順、古い順での並び替えとページ単位の取得 |
+| 🔄 **Embeddingの自動更新** | 日記の作成・編集後、イベントを利用して検索用ベクトルを非同期更新 |
+| 🛡️ **エラー対応** | 検索キーワードのバリデーションおよび外部APIのHTTP 429レスポンスに対するリトライ処理 |
+| 🧪 **単体テスト** | 検索結果の変換、ソート条件の分岐、エラー処理の検証 |
 
 ---
 
-## 👨‍💻 담당 업무 및 주요 구현
+## 👨‍💻 担当業務と主な実装内容
 
-### 01. 임베딩을 활용한 의미 기반 검색
+### 01. Embeddingを活用した意味ベースの検索
 
-- `VoyageAIEmbeddingService`를 사용하여 검색어를 **1024차원 벡터**로 변환
-- `SearchRepository`에서 PostgreSQL pgvector의 **코사인 거리 연산자 `<=>`** 사용
-- 임베딩이 존재하는 `ACTIVE` 상태의 일기를 대상으로 유사도 검색 수행
-- 코사인 거리 `0.7` 미만을 검색 결과 필터링 기준으로 적용
-- 검색어와 일기 본문의 단어가 정확하게 일치하지 않더라도 의미상 관련된 일기를 검색하도록 구현
+- `VoyageAIEmbeddingService`を使用し、検索キーワードを**1024次元ベクトル**に変換
+- `SearchRepository`でPostgreSQLのpgvectorが提供する**コサイン距離演算子`<=>`**を使用
+- Embeddingが存在し、ステータスが`ACTIVE`の日記を対象に類似度検索を実行
+- コサイン距離が`0.7`未満のデータを検索結果として抽出する条件を設定
+- 検索キーワードと日記本文の単語が完全に一致しなくても、意味的に関連する日記を検索できるように実装
 
-> **코사인 거리 기준**
+> **コサイン距離の基準**
 >
-> 코사인 거리는 벡터 간의 차이를 나타내는 값으로, 값이 작을수록 유사한 의미를 갖는 것으로 판단합니다.
+> コサイン距離はベクトル間の差を表す値で、値が小さいほど意味的に類似していると判断します。
 >
-> `0.7`은 검색 결과를 필터링하기 위한 거리 임계값이며, 검색 정확도 70%를 의미하지 않습니다.
+> `0.7`は検索結果を絞り込むための距離のしきい値であり、検索精度が70%であることを意味するものではありません。
 
-### 02. 사용자별 검색 API 및 결과 정렬
+### 02. ユーザー別検索APIと検索結果のソート
 
-- `GET /api/search` REST API 구현
-- Spring Security 인증 정보에서 사용자 UUID를 가져와 검색 대상 제한
-- 사용자 본인의 일기만 조회할 수 있도록 Repository 검색 조건 구성
-- `SearchResultResponse` DTO를 이용해 검색 결과 반환
-- `Pageable`을 이용한 페이지네이션 처리
-- `latest`, `oldest`, `relevance` 정렬 기능 제공
+- `GET /api/search`のREST APIを実装
+- Spring Securityの認証情報からユーザーUUIDを取得し、検索対象を制限
+- ログインユーザー自身の日記のみを取得できるようにRepositoryの検索条件を設定
+- `SearchResultResponse` DTOを利用して検索結果を返却
+- `Pageable`を利用したページネーション処理
+- `latest`、`oldest`、`relevance`のソート機能を提供
 
-**지원하는 정렬 방식**
+**対応するソート方式**
 
-| 정렬 옵션 | 설명 |
+| ソートオプション | 説明 |
 | :--- | :--- |
-| `latest` | 최신 일기순 |
-| `oldest` | 오래된 일기순 |
-| `relevance` | 검색어와의 관련도순 |
+| `latest` | 新しい日記から表示 |
+| `oldest` | 古い日記から表示 |
+| `relevance` | 検索キーワードとの関連度が高い順に表示 |
 
-### 03. 일기 저장 이후 임베딩 비동기 갱신
+### 03. 日記保存後のEmbedding非同期更新
 
-- `DiaryEmbeddingEventListener`를 이용하여 일기 생성·수정 이벤트 수신
-- `@TransactionalEventListener`를 활용하여 트랜잭션 커밋 이후 임베딩 처리
-- `@Async`를 사용해 임베딩 생성 작업을 비동기로 분리
-- 생성된 임베딩 벡터를 DB에 반영하여 검색에 활용
+- `DiaryEmbeddingEventListener`を利用して日記の作成・編集イベントを受信
+- `@TransactionalEventListener`を活用し、トランザクションのコミット後にEmbedding処理を実行
+- `@Async`を使用してEmbedding生成処理を非同期タスクとして分離
+- 生成されたEmbeddingベクトルをデータベースに反映し、検索に利用
 
-**처리 과정**
+**処理の流れ**
 
-1. 사용자가 일기를 작성하거나 수정
-2. 일기 저장 트랜잭션 완료
-3. 임베딩 갱신 이벤트 처리
-4. Voyage AI를 이용한 일기 내용 벡터화
-5. 생성된 벡터를 DB에 저장
-6. 이후 자연어 검색 시 검색 대상에 반영
+1. ユーザーが日記を作成または編集
+2. 日記保存のトランザクションが完了
+3. Embedding更新イベントを処理
+4. Voyage AIを利用して日記の内容をベクトル化
+5. 生成されたベクトルをデータベースに保存
+6. 以降の自然言語検索で検索対象として利用
 
-### 04. 예외 처리 및 테스트
+### 04. 例外処理とテスト
 
-- `null`, 빈 문자열, 공백 검색어에 대한 유효성 검증
-- Voyage AI API에서 HTTP 429 응답 발생 시 **2초 대기 후 최대 1회 재시도**
-- 기존 일기의 임베딩 누락을 보완하기 위한 `DiaryEmbeddingBackfillRunner` 구현
-- `@Profile("!prod")`를 이용해 개발 환경에서만 백필 기능 실행
-- JUnit 5와 Mockito를 이용한 `SearchService` 단위 테스트 작성
-- 정상 검색, 결과 DTO 변환, 정렬 분기 및 오류 흐름 검증
+- `null`、空文字列、空白のみの検索キーワードに対するバリデーション
+- Voyage AI APIからHTTP 429レスポンスが返された場合、**2秒待機して最大1回リトライ**
+- 既存の日記に不足しているEmbeddingデータを補完するため、`DiaryEmbeddingBackfillRunner`を実装
+- `@Profile("!prod")`を利用し、本番環境以外でのみバックフィル処理を実行
+- JUnit 5とMockitoを利用した`SearchService`の単体テストを作成
+- 正常な検索処理、DTOへの変換、ソート条件の分岐、エラー発生時の処理を検証
 
 ---
 
-## 🔁 검색 처리 과정
+## 🔁 検索処理の流れ
 
 ```mermaid
 flowchart TD
-    A["사용자 자연어 검색"] --> B["SearchController"]
+    A["ユーザーによる自然言語検索"] --> B["SearchController"]
     B --> C["SearchService"]
     C --> D["VoyageAIEmbeddingService"]
-    D --> E["검색어 1024차원 벡터 변환"]
+    D --> E["検索キーワードを1024次元ベクトルに変換"]
     E --> F["SearchRepository"]
     F --> G[("PostgreSQL + pgvector")]
-    G --> H["사용자별 유사도 검색"]
-    H --> I["정렬 및 페이지네이션"]
-    I --> J["SearchResultResponse 반환"]
+    G --> H["ユーザー別の類似度検索"]
+    H --> I["ソート・ページネーション"]
+    I --> J["SearchResultResponseを返却"]
 ```
 
-### 검색 API
+### 検索API
 
 **Endpoint**
 
@@ -149,76 +149,76 @@ flowchart TD
 GET /api/search?query=기분%20좋은%20날&page=0&size=3&sort=relevance
 ```
 
-**요청 파라미터**
+**リクエストパラメータ**
 
-| 파라미터 | 설명 | 기본값 |
+| パラメータ | 説明 | デフォルト値 |
 | :--- | :--- | :--- |
-| `query` | 자연어 검색어 (필수) | 없음 |
-| `page` | 페이지 번호 | `0` |
-| `size` | 페이지당 결과 수 | `3` |
+| `query` | 自然言語の検索キーワード（必須） | なし |
+| `page` | ページ番号 | `0` |
+| `size` | 1ページあたりの取得件数 | `3` |
 | `sort` | `latest` / `oldest` / `relevance` | `latest` |
 
 ---
 
-## 📂 주요 소스 코드
+## 📂 主なソースコード
 
 <details>
-<summary><b>검색 기능 주요 소스 파일 보기</b></summary>
+<summary><b>検索機能の主要ソースファイルを表示</b></summary>
 
 <br>
 
-| 파일 | 역할 |
+| ファイル | 役割 |
 | :--- | :--- |
-| `SearchController` | 검색 요청 및 인증 정보 처리 |
-| `SearchService` | 검색어 검증, 서비스 로직 및 DTO 변환 |
-| `VoyageAIEmbeddingService` | Voyage AI 임베딩 API 연동 |
-| `SearchRepository` | pgvector 코사인 거리 검색 |
-| `DiaryEmbeddingEventListener` | 일기 생성·수정 후 임베딩 갱신 |
-| `DiaryEmbeddingBackfillRunner` | 개발 환경의 기존 임베딩 데이터 보완 |
-| `SearchServiceTest` | 검색 서비스 단위 테스트 |
+| `SearchController` | 検索リクエストと認証情報の処理 |
+| `SearchService` | 検索キーワードの検証、サービスロジック、DTOへの変換 |
+| `VoyageAIEmbeddingService` | Voyage AI Embedding APIとの連携 |
+| `SearchRepository` | pgvectorによるコサイン距離検索 |
+| `DiaryEmbeddingEventListener` | 日記の作成・編集後のEmbedding更新 |
+| `DiaryEmbeddingBackfillRunner` | 開発環境における既存Embeddingデータの補完 |
+| `SearchServiceTest` | 検索サービスの単体テスト |
 
 <br>
 
-**소스 코드 바로가기**
+**ソースコードへのリンク**
 
-- [검색 기능 전체 코드](https://github.com/halloween96/tada-was/tree/fix/search-cosine-distance/src/main/java/com/tada/tada/search)
-- [검색 기능 테스트 코드](https://github.com/halloween96/tada-was/tree/fix/search-cosine-distance/src/test/java/com/tada/tada/search)
+- [検索機能のソースコード一覧](https://github.com/halloween96/tada-was_JR/tree/fix/search-cosine-distance/src/main/java/com/tada/tada/search)
+- [検索機能のテストコード](https://github.com/halloween96/tada-was_JR/tree/fix/search-cosine-distance/src/test/java/com/tada/tada/search)
 
 </details>
 
 ---
 
-## 💡 프로젝트를 통해 배운 점
+## 💡 プロジェクトを通じて学んだこと
 
-### 벡터 기반 검색 구현 경험
+### ベクトルベースの検索機能の実装経験
 
-단순 문자열 비교 방식이 아닌 텍스트 임베딩과 pgvector를 활용해 의미 기반 검색을 구현했습니다.
+単純な文字列比較ではなく、テキストEmbeddingとpgvectorを活用した意味ベースの検索機能を実装しました。
 
-이를 통해 자연어 데이터를 벡터로 변환하고 데이터베이스에서 유사도를 비교하는 검색 처리 과정을 경험했습니다.
+これにより、自然言語データをベクトルに変換し、データベース上で類似度を比較する検索処理の流れを経験しました。
 
-### 사용자 데이터 접근 범위 제한
+### ユーザーデータへのアクセス範囲の制限
 
-Spring Security 인증 정보와 Repository 검색 조건을 연계하여 로그인한 사용자의 데이터만 검색할 수 있도록 구현했습니다.
+Spring Securityの認証情報とRepositoryの検索条件を連携させ、ログインユーザー自身のデータのみを検索できるように実装しました。
 
-검색 기능에서도 사용자별 데이터 접근 범위를 고려하는 것이 중요하다는 점을 배웠습니다.
+検索機能においても、ユーザーごとのデータアクセス範囲を適切に制限することの重要性を学びました。
 
-### 이벤트 기반 비동기 처리
+### イベント駆動による非同期処理
 
-일기 저장 이후 수행되는 임베딩 생성 작업을 이벤트 기반 비동기 처리로 분리했습니다.
+日記の保存後に実行されるEmbedding生成処理を、イベント駆動の非同期処理として分離しました。
 
-이를 통해 데이터 저장과 추가 처리 작업의 실행 시점을 분리하는 방법을 익혔습니다.
+この経験を通じて、データの保存処理と追加処理の実行タイミングを分離する方法を学びました。
 
-### 단위 테스트 작성
+### 単体テストの作成
 
-JUnit 5와 Mockito를 이용해 검색 결과 변환, 정렬 조건 및 예외 상황을 검증했습니다.
+JUnit 5とMockitoを使用し、検索結果の変換処理、ソート条件、例外発生時の動作を検証しました。
 
-외부 API와 Repository 의존성을 모의 객체로 대체하여 서비스 로직을 독립적으로 테스트하는 경험을 쌓았습니다.
+外部APIやRepositoryへの依存をモックオブジェクトに置き換えることで、サービスロジックを独立してテストする経験を積みました。
 
-### 향후 개선 방향
+### 今後の改善点
 
-- 실제 검색 사례를 기반으로 코사인 거리 임계값 조정
-- 검색 정확도 및 응답 시간 측정
-- 외부 임베딩 API 장애 상황에 대한 모니터링 보강
+- 実際の検索事例に基づくコサイン距離のしきい値の調整
+- 検索精度およびレスポンス時間の測定
+- 外部Embedding APIの障害発生時における監視機能の強化
 
 ---
 
